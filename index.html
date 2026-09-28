@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Matrimonio Mario &amp; Fabiana — 29.05.2027</title>
+<meta name="description" content="Save the Date — Matrimonio Mario & Fabiana, 29 Maggio 2027" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Great+Vibes&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ivory:#faf7f0;
+    --cream:#f3ecdd;
+    --gold:#c6a15b;
+    --gold-dark:#9c7a38;
+    --sage:#7d8b6f;
+    --sage-dark:#4c5844;
+    --ink:#2b2b28;
+    --rose:#d9a7a0;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    font-family:'Jost',sans-serif;
+    background:var(--ivory);
+    color:var(--ink);
+    overflow:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ============ INTRO / CALENDARIO ============ */
+  #intro{
+    position:fixed;inset:0;z-index:50;
+    background:radial-gradient(1200px 800px at 50% 20%, #fffdf7 0%, var(--ivory) 45%, var(--cream) 100%);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    transition:opacity 1s ease, visibility 1s;
+    padding:20px;
+  }
+  #intro.hidden{opacity:0;visibility:hidden;pointer-events:none}
+  .intro-top{
+    text-align:center;margin-bottom:22px;
+    opacity:0;animation:fadeDown 1s .2s forwards;
+  }
+  .intro-top small{
+    letter-spacing:.45em;text-transform:uppercase;font-size:11px;color:var(--sage-dark);
+  }
+  .intro-top h1{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(22px,4vw,34px);margin-top:8px}
+  .intro-top h1 em{font-family:'Great Vibes',cursive;font-weight:400;color:var(--gold-dark);font-size:1.25em}
+
+  .calendar-stage{perspective:1400px;width:min(430px,92vw)}
+  .calendar{
+    background:#fffdf8;
+    border:1px solid #e8ddc4;
+    border-radius:18px;
+    box-shadow:0 30px 80px rgba(120,95,40,.18), 0 2px 0 #fff inset;
+    overflow:hidden;
+    transform-origin:center center;
+    transition:transform 1.6s cubic-bezier(.16,.8,.24,1), opacity .8s ease;
+    position:relative;
+  }
+  .calendar.zooming{transform:scale(9)!important;opacity:0}
+  .cal-head{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 22px 14px;
+    background:linear-gradient(180deg,#fffefa,#fbf5e6);
+    border-bottom:1px solid #eee1c2;
+  }
+  .cal-head .month{
+    font-family:'Cormorant Garamond',serif;font-size:26px;text-transform:capitalize;
+    min-height:32px;
+  }
+  .cal-head .year{font-size:12px;letter-spacing:.35em;color:var(--gold-dark)}
+  .cal-dots{display:flex;gap:6px}
+  .cal-dots span{width:9px;height:9px;border-radius:50%;background:#e6d6ae}
+  .cal-dots span:first-child{background:var(--rose)}
+  .cal-grid-head,.cal-grid{
+    display:grid;grid-template-columns:repeat(7,1fr);
+    padding:0 14px;
+  }
+  .cal-grid-head{padding-top:12px;padding-bottom:6px}
+  .cal-grid-head span{font-size:10px;letter-spacing:.15em;text-align:center;color:#a99a78;text-transform:uppercase}
+  .cal-grid{padding-bottom:16px;gap:4px;min-height:296px}
+  .day{
+    aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;
+    font-size:14px;border-radius:12px;color:#5b564a;position:relative;
+    transition:background .2s, transform .2s;
+  }
+  .day.empty{background:transparent}
+  .day.today{outline:1px dashed var(--gold);color:var(--gold-dark)}
+  .day.skim{
+    background:linear-gradient(180deg,#dfc084,var(--gold));
+    color:#fff;font-weight:500;
+    transform:scale(1.18);
+    box-shadow:0 6px 18px rgba(198,161,91,.55);
+    z-index:1;
+  }
+  .day.passed{color:#c9bda0}
+  .cal-grid.month-enter .day{animation:dayIn .3s ease}
+  @keyframes dayIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .day.target{
+    background:radial-gradient(circle at 50% 40%, #e8c87e, var(--gold) 70%);
+    color:#fff;font-weight:500;
+    box-shadow:0 0 0 4px #fff, 0 0 0 6px var(--gold), 0 0 30px rgba(198,161,91,.8);
+    transform:scale(1.12);
+    z-index:2;
+    animation:pulse 1s infinite alternate;
+  }
+  @keyframes pulse{from{box-shadow:0 0 0 4px #fff,0 0 0 6px var(--gold),0 0 18px rgba(198,161,91,.6)}to{box-shadow:0 0 0 4px #fff,0 0 0 8px var(--gold),0 0 42px rgba(198,161,91,1)}}
+  .cal-foot{display:flex;align-items:center;justify-content:space-between;padding:0 22px 18px}
+  .progress{flex:1;height:3px;background:#eee2c4;border-radius:99px;overflow:hidden;margin-right:14px}
+  .progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--sage),var(--gold));transition:width .2s}
+  #calDate{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold-dark);min-width:110px;text-align:right}
+  #skipBtn{
+    margin-top:20px;background:transparent;border:1px solid #d8c89c;color:#8a7a52;
+    padding:9px 22px;border-radius:99px;font-size:12px;letter-spacing:.25em;text-transform:uppercase;cursor:pointer;
+  }
+  #skipBtn:hover{background:#2b2b28;color:#fff;border-color:#2b2b28}
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:none}}
+
+  /* ============ HERO MATRIMONIO ============ */
+  #hero{
+    position:fixed;inset:0;z-index:10;
+    display:flex;align-items:center;justify-content:center;
+    background:
+      radial-gradient(900px 600px at 15% 10%, #eef2e6 0%, transparent 60%),
+      radial-gradient(900px 600px at 85% 90%, #f7e8df 0%, transparent 60%),
+      linear-gradient(180deg, #fffdf7 0%, var(--ivory) 50%, #f1e8d2 100%);
+    opacity:0;visibility:hidden;
+    transition:opacity 1.2s ease;
+    overflow:hidden;
+    padding:24px;
+  }
+  #hero.visible{opacity:1;visibility:visible}
+  #hero.visible ~ body{overflow:auto}
+
+  /* cornice floreale */
+  .flora{position:absolute;pointer-events:none;opacity:0;transition:opacity 1.5s ease, transform 2s ease}
+  #hero.visible .flora{opacity:1}
+  .flora.tl{top:-40px;left:-40px;width:min(38vw,420px);transform:rotate(-8deg) scale(.8)}
+  .flora.br{bottom:-40px;right:-40px;width:min(38vw,420px);transform:rotate(172deg) scale(.8)}
+  .flora.tr{top:-30px;right:-30px;width:min(22vw,220px);opacity:0}
+  .flora.bl{bottom:-30px;left:-30px;width:min(22vw,220px);opacity:0}
+  #hero.visible .flora.tl{transform:rotate(0) scale(1)}
+  #hero.visible .flora.br{transform:rotate(180deg) scale(1)}
+  #hero.visible .flora.tr,#hero.visible .flora.bl{opacity:.9}
+  .flora svg{width:100%;height:auto;display:block;filter:drop-shadow(0 10px 20px rgba(90,110,70,.18))}
+
+  /* petali */
+  #petals{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+  .petal{position:absolute;top:-5%;border-radius:80% 0 80% 0;opacity:.85;animation:fall linear infinite}
+  @keyframes fall{
+    0%{transform:translateY(-10vh) rotate(0deg)}
+    100%{transform:translateY(112vh) rotate(340deg)}
+  }
+  @keyframes sway{0%,100%{margin-left:0}50%{margin-left:40px}}
+
+  .card{
+    position:relative;text-align:center;max-width:720px;width:min(720px,94vw);
+    background:rgba(255,253,247,.82);
+    backdrop-filter:blur(10px);
+    border:1px solid #e7dabd;border-radius:26px;
+    padding:clamp(32px,6vw,64px) clamp(20px,5vw,64px);
+    box-shadow:0 40px 100px rgba(120,95,40,.18);
+    transform:translateY(30px) scale(.96);opacity:0;
+    transition:all 1.4s cubic-bezier(.16,.8,.24,1) .3s;
+  }
+  #hero.visible .card{transform:none;opacity:1}
+  .save{letter-spacing:.5em;text-transform:uppercase;font-size:11px;color:var(--sage-dark)}
+  .date-line{margin:14px 0 6px;font-family:'Cormorant Garamond',serif;font-size:clamp(15px,2.5vw,19px);letter-spacing:.35em;color:var(--gold-dark)}
+  .names{font-family:'Great Vibes',cursive;font-size:clamp(52px,10vw,96px);line-height:1.05;color:#2f312b;margin:6px 0}
+  .names span{color:var(--gold-dark)}
+  .sub{font-family:'Cormorant Garamond',serif;font-size:clamp(20px,3.5vw,28px);letter-spacing:.28em;text-transform:uppercase;margin-top:4px}
+  .divider{display:flex;align-items:center;justify-content:center;gap:14px;margin:22px auto;max-width:340px}
+  .divider::before,.divider::after{content:"";height:1px;flex:1;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+  .divider svg{width:34px;height:34px}
+  .verse{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(15px,2.6vw,19px);color:#6b6555;max-width:46ch;margin:0 auto;line-height:1.6}
+  .count{display:flex;justify-content:center;gap:clamp(10px,2.5vw,20px);margin:28px 0 8px}
+  .count div{background:#fff;border:1px solid #ecdfc0;border-radius:16px;min-width:74px;padding:12px 8px}
+  .count b{display:block;font-family:'Cormorant Garamond',serif;font-size:30px;line-height:1}
+  .count small{font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:#9b8f6f}
+  .cta{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:22px}
+  .btn{border-radius:99px;padding:13px 28px;font-size:12px;letter-spacing:.25em;text-transform:uppercase;cursor:pointer;text-decoration:none;display:inline-block;border:1px solid transparent;transition:.25s}
+  .btn.gold{background:linear-gradient(180deg,#d8b96e,#b78f3f);color:#fff;box-shadow:0 12px 26px rgba(183,143,63,.35)}
+  .btn.gold:hover{transform:translateY(-2px)}
+  .btn.ghost{background:transparent;border-color:#cbbd93;color:#6d6350}
+  .btn.ghost:hover{background:#2b2b28;color:#fff;border-color:#2b2b28}
+  .replay{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);background:none;border:none;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:#a89a76;cursor:pointer}
+  .replay:hover{color:#2b2b28}
+
+  /* bloom: fiore centrale che sboccia dietro la scritta */
+  .bloom{
+    position:absolute;left:50%;top:50%;width:min(80vmin,560px);height:min(80vmin,560px);
+    transform:translate(-50%,-58%) scale(.2);opacity:0;pointer-events:none;
+  }
+  #hero.visible .bloom{animation:bloomIn 2.4s cubic-bezier(.16,.8,.24,1) .1s forwards}
+  @keyframes bloomIn{to{transform:translate(-50%,-58%) scale(1);opacity:.35}}
+
+  /* ============ RESPONSIVE / MOBILE ============ */
+  html{-webkit-text-size-adjust:100%}
+  body{overflow-x:hidden}
+  button,.btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  #skipBtn{min-height:44px;padding:11px 26px}
+
+  @media (max-width:520px){
+    #intro{padding:14px;overflow-y:auto}
+    .intro-top{margin-bottom:14px}
+    .intro-top small{letter-spacing:.28em;font-size:10px}
+    .intro-top h1{font-size:clamp(19px,5.5vw,24px)}
+    .calendar-stage{width:min(430px,94vw)}
+    .cal-head{padding:14px 16px 10px}
+    .cal-head .month{font-size:22px}
+    .cal-grid-head,.cal-grid{padding-left:8px;padding-right:8px}
+    .cal-grid-head span{font-size:9px;letter-spacing:.08em}
+    .cal-grid{gap:2px;min-height:0;padding-bottom:12px}
+    .day{font-size:13px;border-radius:9px}
+    .cal-foot{padding:0 14px 14px}
+    #calDate{font-size:14px;min-width:0;flex-shrink:0;margin-left:10px}
+    .progress{margin-right:0}
+
+    #hero{padding:14px;overflow-y:auto}
+    .card{width:94vw;margin:auto;padding:28px 18px;border-radius:20px}
+    .save{letter-spacing:.32em;font-size:10px}
+    .date-line{letter-spacing:.22em;font-size:14px}
+    .sub{letter-spacing:.18em}
+    .names{font-size:clamp(44px,15vw,64px)}
+    .verse{font-size:15px}
+    .verse br{display:none}
+    .divider{margin:16px auto}
+    .count{flex-wrap:wrap;gap:8px;margin:20px 0 4px}
+    .count div{flex:1 1 0;min-width:62px;padding:10px 4px;border-radius:13px}
+    .count b{font-size:24px}
+    .count small{font-size:9px;letter-spacing:.18em}
+    .cta{flex-direction:column;align-items:stretch}
+    .cta .btn{width:100%;padding:14px 18px}
+    .flora.tl,.flora.br{width:min(58vw,260px)}
+    .bloom{width:min(92vmin,420px);height:min(92vmin,420px)}
+    .replay{bottom:10px}
+  }
+
+  @media (max-height:640px){
+    .intro-top{margin-bottom:10px}
+    .intro-top h1{font-size:20px}
+    .cal-grid{min-height:0}
+    .card{padding:24px 18px}
+    .divider{margin:12px auto}
+    .count{margin:14px 0 4px}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  }
+</style>
+</head>
+<body>
+
+<!-- FASE 1: CALENDARIO -->
+<section id="intro" aria-label="Conto alla rovescia calendario">
+  <div class="intro-top">
+    <small>Save the date · scorrono i giorni, uno a uno</small>
+    <h1>Dal giorno <em>di oggi</em> … fino al giorno più bello</h1>
+  </div>
+
+  <div class="calendar-stage">
+    <div class="calendar" id="calendar">
+      <div class="cal-head">
+        <div>
+          <div class="month" id="calMonth">—</div>
+          <div class="year" id="calYear">—</div>
+        </div>
+        <div class="cal-dots"><span></span><span></span><span></span></div>
+      </div>
+      <div class="cal-grid-head">
+        <span>Lun</span><span>Mar</span><span>Mer</span><span>Gio</span><span>Ven</span><span>Sab</span><span>Dom</span>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div class="cal-foot">
+        <div class="progress"><i id="bar"></i></div>
+        <div id="calDate">…</div>
+      </div>
+    </div>
+  </div>
+
+  <button id="skipBtn">Salta animazione →</button>
+</section>
+
+<!-- FASE 2+3: FIORI + SCRITTA -->
+<section id="hero" aria-label="Matrimonio Mario e Fabiana">
+  <canvas id="petals" style="position:absolute;inset:0"></canvas>
+
+  <!-- fiore centrale che sboccia -->
+  <svg class="bloom" viewBox="0 0 400 400" fill="none" aria-hidden="true">
+    <g opacity="0.9">
+      <ellipse cx="200" cy="130" rx="34" ry="70" fill="#e9c9c2"/>
+      <ellipse cx="200" cy="270" rx="34" ry="70" fill="#e9c9c2"/>
+      <ellipse cx="130" cy="200" rx="70" ry="34" fill="#ecd3cb"/>
+      <ellipse cx="270" cy="200" rx="70" ry="34" fill="#ecd3cb"/>
+      <ellipse cx="150" cy="150" rx="42" ry="62" fill="#dfb3ab" transform="rotate(-45 150 150)"/>
+      <ellipse cx="250" cy="150" rx="42" ry="62" fill="#dfb3ab" transform="rotate(45 250 150)"/>
+      <ellipse cx="150" cy="250" rx="42" ry="62" fill="#dfb3ab" transform="rotate(45 150 250)"/>
+      <ellipse cx="250" cy="250" rx="42" ry="62" fill="#dfb3ab" transform="rotate(-45 250 250)"/>
+      <circle cx="200" cy="200" r="30" fill="#c6a15b"/>
+      <circle cx="200" cy="200" r="16" fill="#f7ead0"/>
+    </g>
+    <g stroke="#7d8b6f" stroke-width="3" stroke-linecap="round" opacity=".7">
+      <path d="M200 300 C 160 340, 120 350, 80 360"/>
+      <path d="M200 300 C 240 340, 280 350, 320 360"/>
+      <ellipse cx="140" cy="338" rx="16" ry="9" fill="#9aab8b" stroke="none" transform="rotate(-20 140 338)"/>
+      <ellipse cx="260" cy="338" rx="16" ry="9" fill="#9aab8b" stroke="none" transform="rotate(20 260 338)"/>
+    </g>
+  </svg>
+
+  <!-- angoli floreali -->
+  <div class="flora tl" aria-hidden="true">
+    <svg viewBox="0 0 300 300" fill="none">
+      <path d="M10 290 C 40 200, 60 120, 140 40 C 180 80, 200 140, 190 210" stroke="#7d8b6f" stroke-width="4" stroke-linecap="round"/>
+      <path d="M30 260 C 90 230, 130 180, 160 120" stroke="#9aab8b" stroke-width="3" stroke-linecap="round"/>
+      <ellipse cx="150" cy="70" rx="26" ry="16" fill="#d9a7a0" transform="rotate(-30 150 70)"/>
+      <ellipse cx="185" cy="110" rx="30" ry="18" fill="#e9c9c2" transform="rotate(20 185 110)"/>
+      <ellipse cx="110" cy="130" rx="24" ry="15" fill="#ecd3cb" transform="rotate(-15 110 130)"/>
+      <circle cx="152" cy="105" r="14" fill="#c6a15b"/><circle cx="152" cy="105" r="6" fill="#fff7e3"/>
+      <ellipse cx="90" cy="200" rx="18" ry="10" fill="#9aab8b" transform="rotate(-25 90 200)"/>
+      <ellipse cx="70" cy="170" rx="14" ry="8" fill="#7d8b6f" transform="rotate(-40 70 170)"/>
+      <circle cx="195" cy="65" r="7" fill="#c6a15b"/><circle cx="75" cy="235" r="6" fill="#d9a7a0"/>
+    </svg>
+  </div>
+  <div class="flora br" aria-hidden="true">
+    <svg viewBox="0 0 300 300" fill="none">
+      <path d="M10 290 C 40 200, 60 120, 140 40 C 180 80, 200 140, 190 210" stroke="#7d8b6f" stroke-width="4" stroke-linecap="round"/>
+      <path d="M30 260 C 90 230, 130 180, 160 120" stroke="#9aab8b" stroke-width="3" stroke-linecap="round"/>
+      <ellipse cx="150" cy="70" rx="26" ry="16" fill="#d9a7a0" transform="rotate(-30 150 70)"/>
+      <ellipse cx="185" cy="110" rx="30" ry="18" fill="#e9c9c2" transform="rotate(20 185 110)"/>
+      <ellipse cx="110" cy="130" rx="24" ry="15" fill="#ecd3cb" transform="rotate(-15 110 130)"/>
+      <circle cx="152" cy="105" r="14" fill="#c6a15b"/><circle cx="152" cy="105" r="6" fill="#fff7e3"/>
+      <ellipse cx="90" cy="200" rx="18" ry="10" fill="#9aab8b" transform="rotate(-25 90 200)"/>
+      <circle cx="195" cy="65" r="7" fill="#c6a15b"/>
+    </svg>
+  </div>
+
+  <div class="card">
+    <div class="save">Save the date</div>
+    <div class="date-line">29 · 05 · 2027</div>
+    <h2 class="sub">Matrimonio</h2>
+    <h1 class="names">Mario <span>&amp;</span> Fabiana</h1>
+    <div class="divider" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 21C7 17 3 13.5 3 9.5 3 7 5 5 7.5 5c1.8 0 3.4 1 4.5 2.5C13.1 6 14.7 5 16.5 5 19 5 21 7 21 9.5c0 4-4 7.5-9 11.5Z" fill="#d9a7a0"/><circle cx="12" cy="9.5" r="1.6" fill="#c6a15b"/></svg>
+    </div>
+    <p class="verse">«E poi, un giorno, il calendario si è fermato su una data —<br>la nostra.»<br>Non vediamo l'ora di festeggiare con voi.</p>
+
+    <div class="count" id="count">
+      <div><b id="gg">–</b><small>giorni</small></div>
+      <div><b id="hh">–</b><small>ore</small></div>
+      <div><b id="mm">–</b><small>min</small></div>
+      <div><b id="ss">–</b><small>sec</small></div>
+    </div>
+
+    <div class="cta">
+      <a class="btn gold" id="icsBtn" href="#">Aggiungi al calendario</a>
+      <a class="btn ghost" href="#" onclick="window.print();return false">Stampa invito</a>
+    </div>
+  </div>
+
+  <button class="replay" id="replayBtn">↺ rivedi animazione</button>
+</section>
+
+<script>
+(function(){
+  const TARGET = new Date(2027, 4, 29, 16, 0, 0); // 29/05/2027
+  const now = new Date();
+
+  // --- lista di TUTTI i singoli giorni da oggi al 29/05/2027 ---
+  const DAY_MS = 86400000;
+  const startDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const endDay = new Date(2027, 4, 29);
+  const DAYS = [];
+  (function build(){
+    const d = new Date(startDay);
+    let guard = 0;
+    while (d <= endDay && guard < 900){ DAYS.push(new Date(d)); d.setDate(d.getDate() + 1); guard++; }
+    if(!DAYS.length) DAYS.push(new Date(endDay));
+  })();
+
+  const calMonth = document.getElementById('calMonth');
+  const calYear = document.getElementById('calYear');
+  const calGrid = document.getElementById('calGrid');
+  const calDate = document.getElementById('calDate');
+  const bar = document.getElementById('bar');
+  const calendarEl = document.getElementById('calendar');
+  const intro = document.getElementById('intro');
+  const hero = document.getElementById('hero');
+
+  let renderedY = -1, renderedM = -1;
+
+  const fmtMY = (y,m)=> new Date(y,m,1).toLocaleDateString('it-IT',{month:'long'});
+  const fmtDay = (d)=> d.toLocaleDateString('it-IT',{weekday:'short', day:'numeric', month:'short', year:'numeric'});
+  function renderMonth(y,m,hlDay){
+    calMonth.textContent = fmtMY(y,m);
+    calYear.textContent = y;
+    calGrid.innerHTML = '';
+    calGrid.classList.remove('month-enter');
+    void calGrid.offsetWidth; // restart animazione cambio mese
+    calGrid.classList.add('month-enter');
+    // Lunedi-first: getDay 0=Dom -> 6
+    let first = new Date(y,m,1).getDay(); first = (first + 6) % 7;
+    const days = new Date(y,m+1,0).getDate();
+    for(let i=0;i<first;i++){ const d=document.createElement('div'); d.className='day empty'; calGrid.appendChild(d); }
+    for(let d=1; d<=days; d++){
+      const el = document.createElement('div');
+      el.className = 'day'; el.textContent = d;
+      el.dataset.day = d;
+      if(d < hlDay) el.classList.add('passed');
+      if(d === hlDay) el.classList.add('skim');
+      calGrid.appendChild(el);
+    }
+    renderedY = y; renderedM = m;
+  }
+  // sposta l'evidenziazione senza ridisegnare tutto il mese (fluido alle alte velocità)
+  function moveSkim(dayNum){
+    const prev = calGrid.querySelector('.day.skim');
+    if(prev){ prev.classList.remove('skim'); prev.classList.add('passed'); }
+    const cell = calGrid.querySelector('[data-day="'+dayNum+'"]');
+    if(cell){ cell.classList.remove('passed'); cell.classList.add('skim'); }
+  }
+
+  let idx = 0, finished = false, timers = [];
+  function delayFor(i){
+    // parte piano e accelera fino a velocissimo (totale ~7s, -30%)
+    const t = i / Math.max(1, DAYS.length - 1);
+    return 6 + 91 * Math.pow(1 - t, 3);
+  }
+
+  function step(){
+    if(finished) return;
+    const d = DAYS[idx];
+    const y = d.getFullYear(), m = d.getMonth(), dayNum = d.getDate();
+    if(y !== renderedY || m !== renderedM) renderMonth(y, m, dayNum);
+    else moveSkim(dayNum);
+    calDate.textContent = fmtDay(d);
+    const t = DAYS.length <= 1 ? 1 : idx/(DAYS.length-1);
+    bar.style.width = (t*100).toFixed(1) + '%';
+    if(idx >= DAYS.length - 1){
+      paintTarget(); // crea subito il bordo/sfondo oro sul 29
+      setTimeout(finishZoom, 1000); // 1s ferma sul giorno evidenziato, poi zoom
+      return;
+    }
+    idx++;
+    timers.push(setTimeout(step, delayFor(idx)));
+  }
+
+  function paintTarget(){
+    calDate.textContent = 'sab 29 mag 2027 · eccoci!';
+    bar.style.width = '100%';
+    const cell = calGrid.querySelector('[data-day="29"]');
+    if(cell){ cell.classList.remove('skim'); cell.classList.add('target'); }
+    // centra lo zoom sulla casella del 29
+    if(cell){
+      const cR = calendarEl.getBoundingClientRect();
+      const r = cell.getBoundingClientRect();
+      const cx = ((r.left + r.width/2) - cR.left) / cR.width * 100;
+      const cy = ((r.top + r.height/2) - cR.top) / cR.height * 100;
+      calendarEl.style.transformOrigin = cx + '% ' + cy + '%';
+    }
+  }
+  function finishZoom(){
+    if(finished) return; finished = true;
+    calendarEl.classList.add('zooming');
+    setTimeout(showHero, 700);
+  }
+  function zoomOnTarget(){
+    // usato da "Salta animazione": stessa sequenza (bordo → 1s → zoom)
+    if(finished) return;
+    paintTarget();
+    setTimeout(finishZoom, 1000);
+  }
+
+  function showHero(){
+    intro.classList.add('hidden');
+    hero.classList.add('visible');
+    document.body.style.overflow = 'auto';
+    startPetals();
+  }
+  function resetIntro(){
+    finished = false; idx = 0; renderedY = -1; renderedM = -1;
+    calendarEl.classList.remove('zooming');
+    calendarEl.style.transformOrigin = 'center center';
+    hero.classList.remove('visible');
+    intro.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    timers.forEach(clearTimeout); timers = [];
+    showStart(); // calendario fermo su oggi per 1s, poi scorre
+  }
+
+  document.getElementById('skipBtn').addEventListener('click', ()=>{
+    timers.forEach(clearTimeout);
+    idx = DAYS.length - 1;
+    const d = DAYS[idx];
+    renderMonth(d.getFullYear(), d.getMonth(), d.getDate());
+    calDate.textContent = fmtDay(d);
+    zoomOnTarget();
+  });
+  document.getElementById('replayBtn').addEventListener('click', resetIntro);
+
+  // ---- countdown ----
+  function tick(){
+    let diff = TARGET - new Date();
+    if(diff < 0) diff = 0;
+    const g = Math.floor(diff/864e5), h = Math.floor(diff/36e5)%24,
+          mi = Math.floor(diff/6e4)%60, s = Math.floor(diff/1e3)%60;
+    gg.textContent = g; hh.textContent = String(h).padStart(2,'0');
+    mm.textContent = String(mi).padStart(2,'0'); ss.textContent = String(s).padStart(2,'0');
+  }
+  const gg=document.getElementById('gg'),hh=document.getElementById('hh'),
+        mm=document.getElementById('mm'),ss=document.getElementById('ss');
+  setInterval(tick,1000); tick();
+
+  // ---- aggiungi al calendario (.ics) ----
+  document.getElementById('icsBtn').addEventListener('click', function(e){
+    e.preventDefault();
+    const ics = ['BEGIN:VCALENDAR','VERSION:2.0','BEGIN:VEVENT',
+      'DTSTART:20270529T140000Z','DTEND:20270529T220000Z',
+      'SUMMARY:Matrimonio Mario & Fabiana',
+      'DESCRIPTION:Save the Date — 29 Maggio 2027',
+      'END:VEVENT','END:VCALENDAR'].join('\r\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([ics],{type:'text/calendar'}));
+    a.download = 'matrimonio-mario-fabiana-29-05-2027.ics'; a.click();
+  });
+
+  // ---- petali su canvas ----
+  let petalsStarted = false;
+  function startPetals(){
+    if(petalsStarted) return; petalsStarted = true;
+    const cv = document.getElementById('petals'), ctx = cv.getContext('2d');
+    function resize(){ cv.width = hero.clientWidth; cv.height = hero.clientHeight; }
+    resize(); window.addEventListener('resize', resize);
+    const colors = ['#e9c9c2','#d9a7a0','#c6a15b','#9aab8b','#f3d9d4'];
+    const P = Array.from({length: 60}, ()=>({
+      x: Math.random()*2000, y: Math.random()*-800,
+      r: 5+Math.random()*9, c: colors[Math.random()*colors.length|0],
+      vy: .6+Math.random()*1.4, vx: -.4+Math.random()*.8,
+      rot: Math.random()*Math.PI*2, vr: -.02+Math.random()*.04
+    }));
+    (function draw(){
+      if(!hero.classList.contains('visible')){ requestAnimationFrame(draw); return; }
+      ctx.clearRect(0,0,cv.width,cv.height);
+      const W = cv.width, H = cv.height;
+      P.forEach(p=>{
+        p.y += p.vy; p.x += p.vx + Math.sin(p.y/60)*.4; p.rot += p.vr;
+        if(p.y > H+20){ p.y = -20; p.x = Math.random()*W; }
+        ctx.save(); ctx.translate((p.x%W+W)%W, p.y); ctx.rotate(p.rot);
+        ctx.fillStyle = p.c; ctx.globalAlpha = .85;
+        ctx.beginPath();
+        ctx.ellipse(0,0,p.r,p.r*.62,0,0,Math.PI*2);
+        ctx.fill(); ctx.restore();
+      });
+      requestAnimationFrame(draw);
+    })();
+  }
+
+  // mostra il calendario fermo sul giorno di oggi (dinamico: dipende
+  // dal giorno in cui si apre il sito), lo tiene 1s e poi avvia lo scorrimento
+  function showStart(){
+    const d = DAYS[0];
+    renderMonth(d.getFullYear(), d.getMonth(), d.getDate());
+    calDate.textContent = fmtDay(d);
+    bar.style.width = '0%';
+    timers.push(setTimeout(step, 1000));
+  }
+
+  // avvio
+  showStart();
+})();
+</script>
+</body>
+</html>
